@@ -1,0 +1,108 @@
+@page "/"
+@using Microsoft.Extensions.Logging
+@inject ICookiesUtil Cookies
+@inject ILogger<Index> Logger
+
+<img src="https://user-images.githubusercontent.com/4441470/224455560-91ed3ee7-f510-4041-a8d2-3fc093025112.png" />
+<h1>Soenneker.Blazor.Utils.Cookies demo</h1>
+<p>This page demonstrates cookie get, set, remove, and list using <c>ICookiesUtil</c>.</p>
+<br />
+
+<div class="demo-section">
+    <h2>Get / Set cookie</h2>
+    <input @bind="_cookieName" placeholder="Cookie name" />
+    <input @bind="_cookieValue" placeholder="Cookie value" />
+    <button @onclick="SetCookie">Set</button>
+    <button @onclick="GetCookie">Get</button>
+    @if (_getResult != null)
+    {
+        <p>Value: <strong>@_getResult</strong></p>
+    }
+</div>
+
+<div class="demo-section">
+    <h2>Remove cookie</h2>
+    <input @bind="_removeName" placeholder="Cookie name to remove" />
+    <button @onclick="RemoveCookie">Remove</button>
+</div>
+
+<div class="demo-section">
+    <h2>All cookies</h2>
+    <button @onclick="LoadAllCookies">Refresh list</button>
+    @if (_allCookies != null)
+    {
+        <ul>
+            @foreach (var kv in _allCookies)
+            {
+                <li><code>@kv.Key</code> = @kv.Value</li>
+            }
+        </ul>
+        @if (_allCookies.Count == 0)
+        {
+            <p>No cookies.</p>
+        }
+    }
+</div>
+
+<hr />
+
+@code {
+    private string _cookieName = "demo";
+    private string _cookieValue = "hello";
+    private string? _getResult;
+    private string _removeName = "demo";
+    private IReadOnlyDictionary<string, string>? _allCookies;
+
+    private async Task SetCookie()
+    {
+        try
+        {
+            await Cookies.Set(_cookieName, _cookieValue);
+            Logger.LogInformation("Set cookie {Name}", _cookieName);
+            _getResult = null;
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Set failed");
+        }
+    }
+
+    private async Task GetCookie()
+    {
+        try
+        {
+            _getResult = await Cookies.Get(_cookieName);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Get failed");
+        }
+    }
+
+    private async Task RemoveCookie()
+    {
+        try
+        {
+            await Cookies.Remove(_removeName);
+            Logger.LogInformation("Removed cookie {Name}", _removeName);
+            _getResult = null;
+            _allCookies = null;
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Remove failed");
+        }
+    }
+
+    private async Task LoadAllCookies()
+    {
+        try
+        {
+            _allCookies = await Cookies.GetAll();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "GetAll failed");
+        }
+    }
+}
