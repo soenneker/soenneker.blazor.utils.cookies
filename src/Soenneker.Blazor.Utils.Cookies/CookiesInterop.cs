@@ -36,9 +36,9 @@ public sealed class CookiesInterop : ICookiesInterop
         _initializer = new AsyncInitializer(Initialize);
     }
 
-    private ValueTask Initialize(CancellationToken token)
+    private async ValueTask Initialize(CancellationToken token)
     {
-        return _resourceLoader.ImportModuleAndWaitUntilAvailable(_modulePath, "CookiesInterop", 100, token);
+        _ = await _resourceLoader.ImportModule(_modulePath, token);
     }
 
     private async ValueTask EnsureInitialized(CancellationToken cancellationToken)
