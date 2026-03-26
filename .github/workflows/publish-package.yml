@@ -164,4 +164,4 @@ jobs:
           path: test/Soenneker.Blazor.Utils.Cookies.Demo/bin/Release/net10.0/publish/wwwroot
 
       - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
