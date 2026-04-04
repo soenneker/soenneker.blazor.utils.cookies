@@ -3,48 +3,64 @@
 @inject ICookiesUtil Cookies
 @inject ILogger<Index> Logger
 
-<img src="https://user-images.githubusercontent.com/4441470/224455560-91ed3ee7-f510-4041-a8d2-3fc093025112.png" />
-<h1>Soenneker.Blazor.Utils.Cookies demo</h1>
-<p>This page demonstrates cookie get, set, remove, and list using <c>ICookiesUtil</c>.</p>
-<br />
-
-<div class="demo-section">
-    <h2>Get / Set cookie</h2>
-    <input @bind="_cookieName" placeholder="Cookie name" />
-    <input @bind="_cookieValue" placeholder="Cookie value" />
-    <button @onclick="SetCookie">Set</button>
-    <button @onclick="GetCookie">Get</button>
-    @if (_getResult != null)
-    {
-        <p>Value: <strong>@_getResult</strong></p>
-    }
-</div>
-
-<div class="demo-section">
-    <h2>Remove cookie</h2>
-    <input @bind="_removeName" placeholder="Cookie name to remove" />
-    <button @onclick="RemoveCookie">Remove</button>
-</div>
-
-<div class="demo-section">
-    <h2>All cookies</h2>
-    <button @onclick="LoadAllCookies">Refresh list</button>
-    @if (_allCookies != null)
-    {
-        <ul>
-            @foreach (var kv in _allCookies)
-            {
-                <li><code>@kv.Key</code> = @kv.Value</li>
-            }
-        </ul>
-        @if (_allCookies.Count == 0)
+<Div Space="Space.Y.Is6">
+    <DemoPanel Title="Get / set" Description="Store and read a cookie by name.">
+        <Field>
+            <FieldLabel For="c-name">Name</FieldLabel>
+            <FieldBody>
+                <Input Id="c-name" @bind-Value="_cookieName" />
+            </FieldBody>
+        </Field>
+        <Field>
+            <FieldLabel For="c-val">Value</FieldLabel>
+            <FieldBody>
+                <Input Id="c-val" @bind-Value="_cookieValue" />
+            </FieldBody>
+        </Field>
+        <DemoButtonRow>
+            <Button OnClick="SetCookie">Set</Button>
+            <Button OnClick="GetCookie" Variant="ButtonVariant.Secondary">Get</Button>
+        </DemoButtonRow>
+        @if (_getResult != null)
         {
-            <p>No cookies.</p>
+            <Paragraph Margin="Margin.Is0" TextSize="TextSize.Sm">Value: <Strong>@_getResult</Strong></Paragraph>
         }
-    }
-</div>
+    </DemoPanel>
 
-<hr />
+    <DemoPanel Title="Remove" Description="Delete a cookie by name.">
+        <Field>
+            <FieldLabel For="c-remove">Name</FieldLabel>
+            <FieldBody>
+                <Input Id="c-remove" @bind-Value="_removeName" />
+            </FieldBody>
+        </Field>
+        <DemoButtonRow>
+            <Button OnClick="RemoveCookie" Variant="ButtonVariant.Destructive">Remove</Button>
+        </DemoButtonRow>
+    </DemoPanel>
+
+    <DemoPanel Title="All cookies" Description="Enumerate every cookie visible to this page.">
+        <DemoButtonRow>
+            <Button OnClick="LoadAllCookies" Variant="ButtonVariant.Outline">Refresh list</Button>
+        </DemoButtonRow>
+        @if (_allCookies != null)
+        {
+            @if (_allCookies.Count == 0)
+            {
+                <Paragraph Margin="Margin.Is0" TextSize="TextSize.Sm" TextColor="TextColor.MutedForeground">No cookies.</Paragraph>
+            }
+            else
+            {
+                <Div Space="Space.Y.Is2">
+                    @foreach (var kv in _allCookies)
+                    {
+                        <Paragraph Margin="Margin.Is0" TextSize="TextSize.Sm"><Code>@kv.Key</Code> = @kv.Value</Paragraph>
+                    }
+                </Div>
+            }
+        }
+    </DemoPanel>
+</Div>
 
 @code {
     private string _cookieName = "demo";

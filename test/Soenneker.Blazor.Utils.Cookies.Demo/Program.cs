@@ -10,6 +10,7 @@ using Microsoft.JSInterop;
 using Serilog;
 using Serilog.Debugging;
 using Soenneker.Blazor.Utils.Cookies.Registrars;
+using Soenneker.Quark.Gen.Lucide.Generated;
 using Soenneker.Serilog.Sinks.Browser.Blazor.Registrars;
 
 namespace Soenneker.Blazor.Utils.Cookies.Demo;
@@ -34,6 +35,7 @@ public sealed class Program
 
             builder.Services.AddCookiesUtilAsScoped();
             builder.Services.AddQuarkSuiteAsScoped();
+            builder.Services.AddLucideIconsAsScoped();
 
             WebAssemblyHost host = builder.Build();
 
