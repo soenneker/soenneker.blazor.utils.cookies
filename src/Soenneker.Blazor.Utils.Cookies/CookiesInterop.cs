@@ -15,7 +15,7 @@ namespace Soenneker.Blazor.Utils.Cookies;
 /// <inheritdoc cref="ICookiesInterop"/>
 public sealed class CookiesInterop : ICookiesInterop
 {
-    private const string _modulePath = "/_content/Soenneker.Blazor.Utils.Cookies/js/cookiesinterop.js";
+    private const string _modulePath = "_content/Soenneker.Blazor.Utils.Cookies/js/cookiesinterop.js";
 
     private readonly IModuleImportUtil _moduleImportUtil;
     private readonly CancellationScope _cancellationScope = new();
