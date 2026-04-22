@@ -38,7 +38,7 @@ jobs:
         run: dotnet build test/Soenneker.Blazor.Utils.Cookies.Tests/Soenneker.Blazor.Utils.Cookies.Tests.csproj --configuration Release --no-restore --verbosity minimal
 
       - name: Test
-        run: dotnet test test/Soenneker.Blazor.Utils.Cookies.Tests/Soenneker.Blazor.Utils.Cookies.Tests.csproj --configuration Release --no-build --no-restore --verbosity minimal
+        run: dotnet test --project test/Soenneker.Blazor.Utils.Cookies.Tests/Soenneker.Blazor.Utils.Cookies.Tests.csproj --configuration Release --no-build --no-restore --verbosity minimal
 
       - name: Pack
         run: dotnet pack src/Soenneker.Blazor.Utils.Cookies/Soenneker.Blazor.Utils.Cookies.csproj --configuration Release --no-build --no-restore --output . --verbosity minimal
