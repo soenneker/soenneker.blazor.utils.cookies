@@ -14,10 +14,10 @@ public sealed class CookieOptions
     /// <summary>Domain for the cookie.</summary>
     public string? Domain { get; set; }
 
-    /// <summary>Max age. Takes precedence over <see cref="Expires"/> when set.</summary>
+    /// <summary>Lifetime from the time the cookie is set. Cannot be combined with <see cref="Expires"/>.</summary>
     public TimeSpan? MaxAge { get; set; }
 
-    /// <summary>Expiration date. Ignored when <see cref="MaxAge"/> is set.</summary>
+    /// <summary>Absolute expiration date. Cannot be combined with <see cref="MaxAge"/>.</summary>
     public DateTimeOffset? Expires { get; set; }
 
     /// <summary>If true, cookie is sent only over HTTPS.</summary>

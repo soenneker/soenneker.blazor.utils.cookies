@@ -48,6 +48,7 @@ public sealed class CookiesUtil : ICookiesUtil
         ValidateName(name);
         ArgumentNullException.ThrowIfNull(value);
 
+        options ??= new CookieOptions();
         NormalizeOptions(options);
 
         return _cookiesInterop.Set(name, value, options, cancellationToken);
@@ -58,10 +59,13 @@ public sealed class CookiesUtil : ICookiesUtil
         ValidateName(name);
         ArgumentNullException.ThrowIfNull(value);
 
-        return _cookiesInterop.Set(name, value, new CookieOptions
+        var options = new CookieOptions
         {
             Expires = expires
-        }, cancellationToken);
+        };
+        NormalizeOptions(options);
+
+        return _cookiesInterop.Set(name, value, options, cancellationToken);
     }
 
     public ValueTask Set(string name, string value, TimeSpan maxAge, CancellationToken cancellationToken = default)
@@ -69,13 +73,16 @@ public sealed class CookiesUtil : ICookiesUtil
         ValidateName(name);
         ArgumentNullException.ThrowIfNull(value);
 
-        if (maxAge <= TimeSpan.Zero)
-            throw new ArgumentOutOfRangeException(nameof(maxAge), maxAge, "Cookie max age must be greater than zero.");
+        if (maxAge.TotalSeconds < 1 || maxAge.TotalSeconds > int.MaxValue)
+            throw new ArgumentOutOfRangeException(nameof(maxAge), maxAge, $"Cookie max age must be between one second and {int.MaxValue} seconds.");
 
-        return _cookiesInterop.Set(name, value, new CookieOptions
+        var options = new CookieOptions
         {
             MaxAge = maxAge
-        }, cancellationToken);
+        };
+        NormalizeOptions(options);
+
+        return _cookiesInterop.Set(name, value, options, cancellationToken);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -90,6 +97,8 @@ public sealed class CookiesUtil : ICookiesUtil
     public ValueTask Remove(string name, CookieOptions? options = null, CancellationToken cancellationToken = default)
     {
         ValidateName(name);
+
+        options ??= new CookieOptions();
         NormalizeOptions(options);
 
         return _cookiesInterop.Remove(name, options, cancellationToken);
@@ -129,13 +138,24 @@ public sealed class CookiesUtil : ICookiesUtil
         if (options.Path.IsNullOrWhiteSpace())
             options.Path = "/";
 
+        ValidateAttributeValue(options.Path, nameof(options.Path));
+
+        if (options.Domain is not null)
+            ValidateAttributeValue(options.Domain, nameof(options.Domain));
+
         if (options.Expires.HasValue && options.MaxAge.HasValue)
             throw new ArgumentException("Only one of Expires or MaxAge should be set on CookieOptions.", nameof(options));
 
-        if (options.MaxAge.HasValue && options.MaxAge.Value <= TimeSpan.Zero)
-            throw new ArgumentOutOfRangeException(nameof(options), options.MaxAge, "Cookie MaxAge must be greater than zero.");
+        if (options.MaxAge.HasValue && (options.MaxAge.Value.TotalSeconds < 1 || options.MaxAge.Value.TotalSeconds > int.MaxValue))
+            throw new ArgumentOutOfRangeException(nameof(options), options.MaxAge, $"Cookie MaxAge must be between one second and {int.MaxValue} seconds.");
 
         if (options.SameSite == CookieSameSite.None && !options.Secure)
             throw new ArgumentException("Cookies using SameSite=None should also specify Secure=true.", nameof(options));
+    }
+
+    private static void ValidateAttributeValue(string value, string parameterName)
+    {
+        if (value.IndexOfAny([';', '\r', '\n']) >= 0)
+            throw new ArgumentException("Cookie attribute values cannot contain semicolons or line breaks.", parameterName);
     }
 }

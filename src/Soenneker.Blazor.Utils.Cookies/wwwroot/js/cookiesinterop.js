@@ -1,6 +1,6 @@
 function parseCookies() {
     const str = typeof document !== "undefined" ? document.cookie : "";
-    const result = {};
+    const result = Object.create(null);
 
     if (!str)
         return result;
@@ -13,12 +13,25 @@ function parseCookies() {
         if (eq === -1)
             continue;
 
-        const name = decodeURIComponent(part.slice(0, eq).trim());
-        const value = decodeURIComponent(part.slice(eq + 1).trim());
+        const name = decode(part.slice(0, eq).trim());
+        const value = decode(part.slice(eq + 1).trim());
         result[name] = value;
     }
 
     return result;
+}
+
+function decode(value) {
+    try {
+        return decodeURIComponent(value);
+    } catch {
+        return value;
+    }
+}
+
+function validateAttribute(value, name) {
+    if (value != null && /[;\r\n]/.test(value))
+        throw new Error(`${name} cannot contain semicolons or line breaks.`);
 }
 
 export function get(name) {
@@ -36,6 +49,9 @@ export function set(name, value, options) {
 
     let cookie = encodeURIComponent(name) + "=" + encodeURIComponent(value ?? "");
     const opts = options || {};
+
+    validateAttribute(opts.path, "Cookie path");
+    validateAttribute(opts.domain, "Cookie domain");
 
     if (opts.path != null)
         cookie += "; path=" + opts.path;

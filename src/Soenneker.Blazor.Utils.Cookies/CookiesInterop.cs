@@ -84,6 +84,15 @@ public sealed class CookiesInterop : ICookiesInterop
         if (options == null)
             return null;
 
+        if (options.Expires.HasValue && options.MaxAge.HasValue)
+            throw new System.ArgumentException("Only one of Expires or MaxAge should be set on CookieOptions.", nameof(options));
+
+        if (options.MaxAge.HasValue && (options.MaxAge.Value.TotalSeconds < 1 || options.MaxAge.Value.TotalSeconds > int.MaxValue))
+            throw new System.ArgumentOutOfRangeException(nameof(options), options.MaxAge, $"Cookie MaxAge must be between one second and {int.MaxValue} seconds.");
+
+        if (options.SameSite == CookieSameSite.None && !options.Secure)
+            throw new System.ArgumentException("Cookies using SameSite=None should also specify Secure=true.", nameof(options));
+
         return new
         {
             path = options.Path,
@@ -108,7 +117,7 @@ public sealed class CookiesInterop : ICookiesInterop
     /// <returns>A task that represents the asynchronous operation.</returns>
     public async ValueTask DisposeAsync()
     {
-        await _moduleImportUtil.DisposeContentModule(_modulePath);
         await _cancellationScope.DisposeAsync();
+        await _moduleImportUtil.DisposeContentModule(_modulePath);
     }
 }
