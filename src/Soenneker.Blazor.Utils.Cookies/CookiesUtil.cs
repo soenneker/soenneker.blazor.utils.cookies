@@ -155,7 +155,7 @@ public sealed class CookiesUtil : ICookiesUtil
 
     private static void ValidateAttributeValue(string value, string parameterName)
     {
-        if (value.IndexOfAny([';', '\r', '\n']) >= 0)
+        if (value.AsSpan().IndexOfAny(';', '\r', '\n') >= 0)
             throw new ArgumentException("Cookie attribute values cannot contain semicolons or line breaks.", parameterName);
     }
 }

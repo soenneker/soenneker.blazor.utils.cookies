@@ -35,8 +35,25 @@ function validateAttribute(value, name) {
 }
 
 export function get(name) {
-    const cookies = parseCookies();
-    return cookies[name] ?? null;
+    if (typeof name !== "string")
+        return parseCookies()[name] ?? null;
+
+    const str = typeof document !== "undefined" ? document.cookie : "";
+    let result = null;
+    let start = 0;
+    let eq = str.indexOf("=");
+    while (start < str.length) {
+        let end = str.indexOf(";", start);
+        if (end === -1)
+            end = str.length;
+        if (eq !== -1 && eq < end) {
+            if (decode(str.slice(start, eq).trim()) === name)
+                result = decode(str.slice(eq + 1, end).trim());
+            eq = str.indexOf("=", end + 1);
+        }
+        start = end + 1;
+    }
+    return result;
 }
 
 export function getAll() {
