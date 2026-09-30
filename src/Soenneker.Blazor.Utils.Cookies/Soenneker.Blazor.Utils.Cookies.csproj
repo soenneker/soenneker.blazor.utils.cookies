@@ -43,6 +43,6 @@
 
     <ItemGroup>
         <PackageReference Include="Soenneker.Blazor.Utils.ModuleImport" Version="4.0.1908" />
-        <PackageReference Include="Soenneker.Extensions.String" Version="4.0.767" />
+        <PackageReference Include="Soenneker.Extensions.String" Version="4.0.770" />
     </ItemGroup>
 </Project>
