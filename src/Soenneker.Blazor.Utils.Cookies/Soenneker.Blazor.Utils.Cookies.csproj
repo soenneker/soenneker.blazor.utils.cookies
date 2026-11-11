@@ -46,7 +46,7 @@
 
     <ItemGroup>
         <PackageReference Include="Soenneker.Blazor.Utils.ModuleImport" Version="11.0.1940" />
-        <PackageReference Include="Soenneker.Extensions.String" Version="11.0.813" />
+        <PackageReference Include="Soenneker.Extensions.String" Version="11.0.816" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Soenneker.Gen.Web.Minifier" Version="11.0.57" PrivateAssets="all" />
